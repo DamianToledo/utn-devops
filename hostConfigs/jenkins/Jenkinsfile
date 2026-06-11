@@ -13,7 +13,7 @@ pipeline {
             steps {
                 sh 'find . -path ./utn-devops-app/myapp/vendor -prune -o -name \\*.php -exec php -l "{}" \\;'
                 retry(2) {
-                    sh 'cd utn-devops-app/myapp && composer install --no-scripts --prefer-dist'
+                    sh 'cd utn-devops-app/myapp && composer install --no-scripts --prefer-dist --ignore-platform-reqs'
                 }
             }
         }
