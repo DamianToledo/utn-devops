@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh './utn-devops-app/myapp/vendor/bin/phpunit -c ./utn-devops-app/myapp/phpunit.xml'
+                sh './utn-devops-app/myapp/vendor/bin/phpunit --no-globals-backup -c ./utn-devops-app/myapp/phpunit.xml'
             }
         }
     }
