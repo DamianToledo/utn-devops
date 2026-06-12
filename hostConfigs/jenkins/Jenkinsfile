@@ -9,14 +9,20 @@ pipeline {
         sh 'cd utn-devops-app && git checkout unidad-2'
     }
 }
-        stage('Build') {
-            steps {
-                sh 'find . -path ./utn-devops-app/myapp/vendor -prune -o -name \\*.php -exec php -l "{}" \\;'
-                retry(2) {
-                    sh 'cd utn-devops-app/myapp && composer install --no-scripts --prefer-dist --ignore-platform-reqs'
-                }
-            }
+       stage('Build') {
+    steps {
+        // 1. Validación de sintaxis nativa (esto sigue igual)
+        sh 'find . -path ./utn-devops-app/myapp/vendor -prune -o -name "*.php" -exec php -l {} \\;'
+        
+        retry(2) {
+            // 2. Descargamos la versión de Composer compatible con PHP 7.4 en la carpeta donde la necesitamos
+            sh 'curl -sS https://getcomposer.org/download/2.2.24/composer.phar -o ./utn-devops-app/myapp/composer.phar'
+            
+            // 3. Ejecutamos usando el PHP 7.4 local apuntando al binario descargado (remplazamos el "composer" global por "php composer.phar")
+            sh 'cd utn-devops-app/myapp && php composer.phar install --no-scripts --prefer-dist --ignore-platform-reqs'
         }
+    }
+}
         stage('Test') {
             steps {
                 sh './utn-devops-app/myapp/vendor/bin/phpunit --no-globals-backup -c ./utn-devops-app/myapp/phpunit.xml'
